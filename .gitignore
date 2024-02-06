@@ -1,0 +1,4 @@
+.venv
+project.MD
+*.pyc
+*.env
