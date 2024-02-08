@@ -2,3 +2,4 @@
 project.MD
 *.pyc
 *.env
+src/funnyapi.egg-info
