@@ -3,3 +3,4 @@ project.MD
 *.pyc
 *.env
 src/funnyapi.egg-info
+db_data
