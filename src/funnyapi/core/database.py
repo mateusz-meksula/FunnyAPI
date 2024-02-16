@@ -1,4 +1,4 @@
-from typing import Annotated, TypeAlias
+from typing import Annotated, Any, TypeAlias
 
 from fastapi import Depends
 from mysql.connector.aio import connect
@@ -7,6 +7,14 @@ from mysql.connector.aio.cursor import MySQLCursorDict
 from funnyapi.core.config import Config
 
 config = Config()
+
+
+class Cursor(MySQLCursorDict):
+    async def fetchone(self) -> dict[str, Any] | None:
+        return await super().fetchone()
+
+    async def fetchall(self) -> list[dict[str, Any]]:
+        return await super().fetchall()  # type: ignore
 
 
 async def get_connection():
@@ -27,4 +35,4 @@ async def get_cursor():
     await connection.close()
 
 
-CursorD: TypeAlias = Annotated[MySQLCursorDict, Depends(get_cursor)]
+CursorD: TypeAlias = Annotated[Cursor, Depends(get_cursor)]
