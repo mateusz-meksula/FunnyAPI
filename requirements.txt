@@ -2,3 +2,4 @@ fastapi==0.109.2
 uvicorn==0.27.0.post1
 pydantic-settings==2.1.0
 mysql-connector-python==8.3.0
+PyPika==0.48.9

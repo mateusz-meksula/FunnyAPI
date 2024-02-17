@@ -10,11 +10,11 @@ config = Config()
 
 
 class Cursor(MySQLCursorDict):
-    async def fetchone(self) -> dict[str, Any] | None:
+    async def fetchone(self) -> Any | None:
         return await super().fetchone()
 
-    async def fetchall(self) -> list[dict[str, Any]]:
-        return await super().fetchall()  # type: ignore
+    async def fetchall(self) -> list[Any]:
+        return await super().fetchall()
 
 
 async def get_connection():
