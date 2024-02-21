@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS user (
     password_hash VARCHAR(60) NOT NULL,
     is_admin BOOLEAN DEFAULT 0,
     is_banned BOOLEAN DEFAULT 0,
+    created timestamp DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (user_id),
     INDEX idx_username (username)

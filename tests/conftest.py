@@ -10,6 +10,7 @@ os.environ["MYSQL_HOST"] = "test"
 os.environ["MYSQL_USER"] = "test"
 os.environ["MYSQL_PASSWORD"] = "test"
 
+from funnyapi.core.database import get_cursor  # noqa: E402
 from funnyapi.main import app  # noqa: E402
 
 
@@ -25,7 +26,8 @@ CREATE TABLE IF NOT EXISTS user (
     username VARCHAR(20) UNIQUE NOT NULL,
     password_hash VARCHAR(60) NOT NULL,
     is_admin INTEGER DEFAULT 0,
-    is_banned INTEGER DEFAULT 0
+    is_banned INTEGER DEFAULT 0,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
     """
     )
@@ -72,18 +74,28 @@ CREATE TABLE IF NOT EXISTS joke_category (
     os.remove("testfunnyapi.db")
 
 
-@pytest.fixture(name="client")
-def client_fixture():
-    client = TestClient(app)
-    yield client
-    app.dependency_overrides.clear()
-
-
 @pytest_asyncio.fixture(name="cursor", scope="function")
 async def cursor_fixture():
+
+    def dict_factory(cursor, row):
+        fields = [column[0] for column in cursor.description]
+        return {key: value for key, value in zip(fields, row)}
+
     connection = await aiosqlite.connect("testfunnyapi.db")
+    connection.row_factory = dict_factory  # type: ignore
     cursor = await connection.cursor()
     yield cursor
     await connection.commit()
     await cursor.close()
     await connection.close()
+
+
+@pytest.fixture(name="client")
+def client_fixture(cursor):
+    def get_cursor_override():
+        return cursor
+
+    app.dependency_overrides[get_cursor] = get_cursor_override
+    client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()

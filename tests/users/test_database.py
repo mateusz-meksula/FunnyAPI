@@ -46,10 +46,8 @@ async def test_user_add(user_repo: UserRepository, cursor: Cursor):
     data = await cursor.fetchone()
 
     assert data is not None
-    assert len(data) == 5
-    assert isinstance(data[0], int)
-    assert "test_user" in data
-    assert "test_hashed_password" in data
+    assert isinstance(data["user_id"], int)
+    assert data["username"] == "test_user"
 
 
 @pytest.mark.asyncio
@@ -57,9 +55,11 @@ async def test_user_get(user_repo: UserRepository):
     user = await user_repo.get(1)
 
     assert user is not None
-    assert user[0] == 1  # type: ignore
-    assert "test01" in user
-    assert "hash01" in user
+    assert user["user_id"] == 1
+    assert user["username"] == "test01"
+    assert user["is_admin"] == 0
+    assert user["is_banned"] == 0
+    # assert isinstance(user["created"], datetime) # TODO
 
 
 @pytest.mark.asyncio
@@ -77,7 +77,7 @@ async def test_user_get_all(user_repo: UserRepository):
     assert len(users) >= 5
 
     user = users[0]
-    assert user[0] == 1  # type: ignore
+    assert user["user_id"] == 1
 
 
 @pytest.mark.asyncio
@@ -85,14 +85,14 @@ async def test_user_modify(user_repo: UserRepository, cursor: Cursor):
     await cursor.execute("SELECT is_banned FROM user WHERE user_id = 1")
     data = await cursor.fetchone()
     assert data is not None
-    assert data[0] == 0
+    assert data["is_banned"] == 0
 
     await user_repo.modify(1, is_banned=True)
 
     await cursor.execute("SELECT is_banned FROM user WHERE user_id = 1")
     data = await cursor.fetchone()
     assert data is not None
-    assert data[0] == 1
+    assert data["is_banned"] == 1
 
 
 @pytest.mark.asyncio
