@@ -6,12 +6,8 @@ import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 
-os.environ["MYSQL_HOST"] = "test"
-os.environ["MYSQL_USER"] = "test"
-os.environ["MYSQL_PASSWORD"] = "test"
-
-from funnyapi.core.database import get_cursor  # noqa: E402
-from funnyapi.main import app  # noqa: E402
+from funnyapi.core.database import get_cursor
+from funnyapi.main import app
 
 
 @pytest.fixture(scope="session", autouse=True)

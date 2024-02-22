@@ -1,12 +1,9 @@
-from typing import Annotated, Any, TypeAlias
+from typing import Any
 
-from fastapi import Depends
 from mysql.connector.aio import connect
 from mysql.connector.aio.cursor import MySQLCursorDict
 
 from funnyapi.core.config import Config
-
-config = Config()
 
 
 class Cursor(MySQLCursorDict):
@@ -18,6 +15,7 @@ class Cursor(MySQLCursorDict):
 
 
 async def get_connection():
+    config = Config()
     return await connect(
         host=config.db_host,
         user=config.db_user,
@@ -33,6 +31,3 @@ async def get_cursor():
     await connection.commit()
     await cursor.close()
     await connection.close()
-
-
-CursorD: TypeAlias = Annotated[Cursor, Depends(get_cursor)]

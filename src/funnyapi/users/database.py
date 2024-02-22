@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import TypedDict
 
-from pypika import Query, Table
+from pypika import MySQLQuery as Query
+from pypika import Table
 
 from funnyapi.core.database import Cursor
 
@@ -11,6 +13,7 @@ class User(TypedDict):
     password_hash: str
     is_admin: bool
     is_banned: bool
+    created: datetime
 
 
 class UserRepository:
@@ -31,6 +34,15 @@ class UserRepository:
             Query.from_(self.user_table)
             .select("*")
             .where(self.user_table.user_id == user_id)
+        )
+        await self.cursor.execute(q.get_sql())
+        return await self.cursor.fetchone()
+
+    async def get_by_username(self, username: str) -> User | None:
+        q = (
+            Query.from_(self.user_table)
+            .select("*")
+            .where(self.user_table.username == username)
         )
         await self.cursor.execute(q.get_sql())
         return await self.cursor.fetchone()
