@@ -1,5 +1,7 @@
 import string
 
+from passlib.hash import pbkdf2_sha256
+
 
 def validate_password(password: str) -> str:
     has_min_len = len(password) >= 10
@@ -31,3 +33,11 @@ def validate_password(password: str) -> str:
         raise ValueError("Password must contain at least one number.")
 
     return password
+
+
+def get_password_hash(password: str):
+    return pbkdf2_sha256.hash(password)
+
+
+def verify_password(password: str, hash: str) -> bool:
+    return pbkdf2_sha256.verify(password, hash)

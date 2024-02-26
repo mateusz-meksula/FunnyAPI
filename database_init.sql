@@ -4,7 +4,7 @@ USE funnyapi;
 CREATE TABLE IF NOT EXISTS user (
     user_id SMALLINT UNSIGNED AUTO_INCREMENT,
     username VARCHAR(20) UNIQUE NOT NULL,
-    password_hash VARCHAR(60) NOT NULL,
+    password_hash VARCHAR(100) NOT NULL,
     is_admin BOOLEAN DEFAULT 0,
     is_banned BOOLEAN DEFAULT 0,
     created timestamp DEFAULT CURRENT_TIMESTAMP,
