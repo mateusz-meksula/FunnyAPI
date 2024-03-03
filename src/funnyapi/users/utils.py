@@ -1,6 +1,26 @@
 import string
 
+from fastapi import HTTPException, status
+from jose import jwt
 from passlib.hash import pbkdf2_sha256
+
+
+class AuthenticationError(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect username or password.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+
+class CredentialsError(HTTPException):
+    def __init__(self) -> None:
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
 
 def validate_password(password: str) -> str:
@@ -41,3 +61,11 @@ def get_password_hash(password: str):
 
 def verify_password(password: str, hash: str) -> bool:
     return pbkdf2_sha256.verify(password, hash)
+
+
+def create_jwt_token(payload: dict, key: str, algorithm: str) -> str:
+    return jwt.encode(
+        claims=payload.copy(),
+        key=key,
+        algorithm=algorithm,
+    )

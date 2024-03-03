@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated, TypeAlias
+from typing import Annotated, Literal, TypeAlias
 
 from pydantic import StringConstraints, model_validator
 from pydantic.functional_validators import AfterValidator
@@ -32,3 +32,8 @@ class UserRead(BaseModel):
     is_admin: bool
     is_banned: bool
     created: datetime
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: Literal["bearer"]

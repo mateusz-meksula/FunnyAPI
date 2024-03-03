@@ -7,3 +7,6 @@ fastapi-restful==0.5.0
 typing-inspect==0.9.0
 passlib==1.7.4
 pudb==2024.1
+python-jose==3.3.0
+cryptography==42.0.5
+python-multipart==0.0.9

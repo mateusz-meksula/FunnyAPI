@@ -6,6 +6,7 @@ import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 
+from funnyapi.core.config import get_config
 from funnyapi.core.database import get_cursor
 from funnyapi.main import app
 
@@ -86,12 +87,30 @@ async def cursor_fixture():
     await connection.close()
 
 
+@pytest.fixture(name="config")
+def get_app_config():
+    class MockConfig:
+        def __init__(self):
+            self.db_host = ""
+            self.db_user = ""
+            self.db_password = ""
+            self.db_name = ""
+            self.jwt_secret_key = "test"
+            self.jwt_algorithm = "HS256"
+
+    yield MockConfig()
+
+
 @pytest.fixture(name="client")
-def client_fixture(cursor):
+def client_fixture(cursor, config):
     def get_cursor_override():
         return cursor
 
+    def get_config_override():
+        return config
+
     app.dependency_overrides[get_cursor] = get_cursor_override
+    app.dependency_overrides[get_config] = get_config_override
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
