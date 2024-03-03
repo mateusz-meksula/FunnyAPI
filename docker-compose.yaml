@@ -8,6 +8,7 @@ services:
         command: uvicorn funnyapi.main:app --host 0.0.0.0 --port 8000 --reload
         ports:
             - 8000:8000
+            - 7999:7999 # for remote debugging
         env_file:
             - ./api.env
         volumes:
